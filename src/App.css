@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  height: 100%;
+  width: 100%; 
 }
 
 .App-logo {
@@ -18,7 +20,7 @@
   /* background-color: #282c34; */
   background-image: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.9)),
     url('/Users/jeffreyjeremiah/Desktop/health_calculator_react/health-app/src/img/wallpaper.jpg');
-  
+
   z-index: -1;
   background-repeat: no-repeat;
   background-attachment: fixed;

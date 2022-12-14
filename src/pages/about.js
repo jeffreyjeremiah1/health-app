@@ -5,15 +5,15 @@ import menu from '../food';
 import { FaRedo } from 'react-icons/fa'
 
 const About = () => {
-  let [inputs, setInputs] = useState('');
-  let [food, setFood] = useState("");
-  let firstList =  Object.values(food === "" || food[0].contents);
+  const [inputs, setInputs] = useState('');
+  const [food, setFood] = useState("");
+  const firstList =  Object.values(food === "" || food[0].contents);
     
   function handleChange(event) {
     setInputs(event.target.value)
   }
 
-  let checkMeal =  menu.filter((val) => {
+  const checkMeal =  menu.filter((val) => {
     return val.name.toLowerCase().includes(inputs.toLowerCase())
   });
 

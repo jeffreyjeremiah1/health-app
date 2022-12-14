@@ -1,8 +1,13 @@
-import React from "react";
+import {React, useContext} from "react";
 import { Nav, Bars, NavMenu, NavLink, NavBtn, NavBtnLink } from './NavbarElements';
-
+import { appContext } from "../../App";
+// import { FaCaretDown } from 'react-icons/fa';
+import { Dropdown } from "./dropdown";
 
 const Navbar = () => {
+
+    const {user, setUser} = useContext(appContext);
+
     return (
        <>
         <Nav>
@@ -24,14 +29,17 @@ const Navbar = () => {
                     Sign Up
                 </NavLink>
             </NavMenu>
-            <NavBtn>
-                <NavBtnLink to='/signin'>Sign In</NavBtnLink>
-            </NavBtn>
+        
+            {
+                user.auth ? 
+                <Dropdown /> : 
+                <NavBtn>
+                 <NavBtnLink to='/login'>Sign In</NavBtnLink>
+                </NavBtn>
+            }
         </Nav>
        </>   
-    
     )
 }
 
 export default Navbar;
-

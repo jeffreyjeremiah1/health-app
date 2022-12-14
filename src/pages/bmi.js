@@ -10,17 +10,17 @@ const BMI = () => {
       if (BMI < 18.5) {
         let difference = 18.5 - BMI
         difference = Math.round(difference, 2);
-        return <h3>You are underweight, you need to gain at least {difference} kg to reach a healthy BMI.</h3>
+        return <h3>You are underweight, you need to gain at least <span style={{color: 'red'}}>{difference} kg</span> to reach a healthy BMI.</h3>
       }else if(BMI < 24.9) {
         return <h3>You have a healthy weight</h3>
       }else if (BMI < 35) {
         let difference = BMI - 18.5
         difference = Math.round(difference, 2)
-        return <h3>You are obese, you need to loose at least {difference} kg to reach a healthy BMI.</h3>
+        return <h3>You are obese, you need to loose at least <span style={{color: 'red'}}>{difference} kg</span> to reach a healthy BMI.</h3>
       } else {
         let difference = BMI - 18.5
         difference = Math.round(difference, 2)
-        return <h3>You are severely obese, you need to loose at least {difference} kg to reach a healthy BMI</h3> 
+        return <h3>You are severely obese, you need to loose at least <span style={{color: 'red'}}>{difference} kg</span> to reach a healthy BMI</h3> 
       }
     }
 
