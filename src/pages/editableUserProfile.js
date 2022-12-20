@@ -1,8 +1,7 @@
-import {React, useEffect, useState, useContext} from 'react';
+import {React, useEffect, useState, useContext, useRef} from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import '../index.css';
 import {Wrapper, TextBoxLabel, Textbox, Card, CardTitle, Container, FormGroup, CoolButton} from '../components/LoginComponents/LoginElements';
-import { FaUserCircle, FaPen, FaMapMarkerAlt, FaInstagram, FaTwitter } from 'react-icons/fa'
 import axios from 'axios';
 import { appContext } from "../App";
 
@@ -13,30 +12,38 @@ const  EditProfile = () => {
     console.log(user);
 
     const [error, setError] = useState(false);
-
-    const photoUpload = e =>{
-        e.preventDefault();
-        const reader = new FileReader();
-        const file = e.target.files[0];
-        reader.onloadend = () => {
-          this.setState({
-            file: file,
-            imagePreviewUrl: reader.results
-          });
-        }
-        reader.readAsDataURL(file);
-      }
-
-    // keeps track of if the current info page belongs to the logged in user
+    const [imageToUpload, setImageToUpload] = useState(null);
+    const [imageToShow, setImageToShow] = useState({image: null});
     const [ isUser, setIsUser ] = useState(false);
 
-    const navigate = useNavigate();
+      // This keeps track of the user returned from the api call
+      const [account, setAccount] = useState(user);
 
+    const navigate = useNavigate();
     const id = user.user._id
     console.log(id);
+
     
-    // This keeps track of the user returned from the api call
-    const [account, setAccount] = useState(user);
+    //helps with uploading images to the server
+    function uploadImage(e){
+        if (e.target.files.length !== 0){
+            // console.log(e.target.files);
+        setImageToUpload({image: URL.createObjectURL(e.target.files[0])});
+        }
+    };
+
+    //this helps with picking the image
+    const inputRef = useRef(null);
+
+    function pickImage(e){
+        console.log(e.target.files);
+        if (e.target.files.length !== 0) {
+            setImageToShow({image: URL.createObjectURL(e.target.files[0])});
+        }
+     };
+ 
+
+  
     console.log(account);
 
     const handleSubmit = async (event) => {
@@ -67,23 +74,16 @@ const  EditProfile = () => {
         <> 
             <section>
             <Card>
-                <h2>Profile Settings Manager</h2>
+                <h3>Profile Settings Manager</h3>
+
+                <div className='image-upload'>
+                    {/* <FaUserCircle style={{fontSize: '120px', float: 'left'}}/> */}
+                    <img className='profile-image' src={imageToShow.image ? imageToShow.image : require('./../img/default-profile-picture1.jpg')}/>
+                    <input style={{display: 'none'}} ref={inputRef} accept="image/*" type="file" onChange={pickImage} value={account.img}/>
+                    <CoolButton onClick={() => {inputRef.current.click()}} style={{width: '200px', top: '30%'}}>Edit Image</CoolButton>
+                </div>
 
                <form onSubmit={handleSubmit} >
-
-                <Container>
-
-                    <Container className='image-upload'>
-                        <TextBoxLabel for='photo-upload'>
-                                <FaUserCircle style={{fontSize: '120px'}}/>
-                        </TextBoxLabel>
-                        <input id="photo-upload" type="file" onChange={photoUpload} />
-                    </Container>
-                   
-
-                    <CoolButton>Change Image</CoolButton>
-                </Container>
-
                 <Container>
                     <FormGroup>
                     <Wrapper>

@@ -5,9 +5,24 @@ const router = express.Router();
 const Person = require('../models/SignUpModels');
 // const Profile = require('../models/ProfileModels');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const jsonwt = require("jsonwebtoken");
 const passport = require("passport");
 const bodyParser = require('body-parser');
+
+// storage
+const Storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.fieldname}-${Date.now()} ${path.extname(file.originalname)}`)
+    }
+});
+
+const upload = multer({storage:Storage})
 
 
 //Import Schema for Person to Register
@@ -17,7 +32,7 @@ router.get('/', function (req, res) {
     res.end();
 });
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', upload.single('image'), async (req, res) => {
     Person.findOne({ email: req.body.email})
         .then(person => {
             if (person) {
@@ -33,7 +48,13 @@ router.post('/signup', async (req, res) => {
                     bcrypt.hash(req.body.password, salt, function(err, hash) {
                       req.body.password = hash;
 
-                      const signedUpUser = new Person({
+                    const imageObject = {
+                        data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+                        contentType: 'image/png'
+                    };
+                
+                    const signedUpUser = new Person({
+                        img: imageObject,
                         firstName: req.body.firstName,
                         lastName: req.body.lastName,
                         email: req.body.email,
@@ -49,6 +70,7 @@ router.post('/signup', async (req, res) => {
                 
                     const payload = {
                         id: signedUpUser.id,
+                        img: signedUpUser.img,
                         firstName: signedUpUser.firstName,
                         lastName: signedUpUser.lastName,
                         email: signedUpUser.email,
@@ -176,7 +198,7 @@ router.get(
     passport.authenticate("jwt", { session: false}),
     (req, res) => {
         const id = req.params.id;
-        Person.findById(id, ['_id', 'firstName', 'lastName', 'email', 'profile', 'social'], (err, user) => {
+        Person.findById(id, ['_id', 'img', 'firstName', 'lastName', 'email', 'profile', 'bio', 'instagram', 'twitter'], (err, user) => {
             if (err) {
                 console.log(err);
             } else if (!user) {
@@ -220,7 +242,7 @@ router.patch('/edit-profile/:id', async (req, res ) => {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
           req.body.password = hash;
 
-          Person.findByIdAndUpdate(id, {$set: req.body }, {new: true, projection: ['_id', 'firstName', 'lastName', 'email', 'location', 'bio', 'pic', 'instagram', 'twitter'] },(err, user) => {
+          Person.findByIdAndUpdate(id, {$set: req.body }, {new: true, projection: ['_id', 'img', 'firstName', 'lastName', 'email', 'location', 'bio', 'pic', 'instagram', 'twitter'] },(err, user) => {
             if (err) {
                 console.log(err);
             } else if (!user) {

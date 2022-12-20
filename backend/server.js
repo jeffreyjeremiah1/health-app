@@ -10,10 +10,12 @@ const passport = require('passport');
 const cookieParser = require("cookie-parser");
 const session = require('express-session')
 const mongoose = require("mongoose");
+const multer = require('multer');
 const dotenv = require('dotenv');
 const routesUrls = require('./routes/route');
 const cors = require('cors');
 const flash = require('express-flash')
+
 
 
 const corsOptions = {
@@ -25,6 +27,7 @@ const corsOptions = {
 dotenv.config()
 
 mongoose.connect(process.env.DATABASE_ACCESS, () => console.log("Database connected"));
+
 
 app.use(express.json());
 app.use(cors(corsOptions));

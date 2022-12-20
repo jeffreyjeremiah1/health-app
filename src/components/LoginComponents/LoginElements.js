@@ -20,13 +20,13 @@ export const CardTitle = styled.div`
 `;
 
 export const FormGroup = styled.div`
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.5rem;
 `;
 
 export const Wrapper = styled.div`
     position: relative;
     z-index: 0;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     border-bottom: 1px solid #c7c7c7;
 `;
 
@@ -36,7 +36,7 @@ export const Container = styled.div`
     display: grid;
     grid-template-columns: 15rem 15rem;
     grid-gap: 0.5rem;
-    margin-bottom: 1.50rem;
+    margin-bottom: 1.25rem;
     border-bottom: 1px;
 `;
 
@@ -59,7 +59,7 @@ export const Textbox = styled.input`
     position: relative;
     z-index: 0;
     width: 100%;
-    height: 56px;
+    height: 52px;
     line-height: 56px;
     border: 0;
     border-bottom: 1px solid #c7c7c7;
@@ -108,5 +108,5 @@ export const CoolButton = styled.button`
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
         0 3px 1px -2px rgba(0, 0, 0, 0.12),
         0 1px 5px 0 rgba(0, 0, 0, 0.2);
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.5rem;
 `;

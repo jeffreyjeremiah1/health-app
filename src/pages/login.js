@@ -43,6 +43,7 @@ const Login = () => {
             const { firstName, lastName, email, password, password2 } = form;
             if (password === password2) {
                 await axios.post("http://localhost:4000/app/signup", {
+                    img: "",
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
