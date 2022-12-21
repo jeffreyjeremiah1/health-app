@@ -10,14 +10,16 @@ const  EditProfile = () => {
     // Previous data of user
     const {user, setUser} = useContext(appContext);
     console.log(user);
+    const [profilePicture, setProfilePicture] = useState(null);
 
     const [error, setError] = useState(false);
     const [imageToUpload, setImageToUpload] = useState(null);
     const [imageToShow, setImageToShow] = useState({image: null});
     const [ isUser, setIsUser ] = useState(false);
 
-      // This keeps track of the user returned from the api call
-      const [account, setAccount] = useState(user);
+    // This keeps track of the user returned from the api call
+    const [account, setAccount] = useState(user);
+    console.log(account);
 
     const navigate = useNavigate();
     const id = user.user._id
@@ -29,6 +31,7 @@ const  EditProfile = () => {
         if (e.target.files.length !== 0){
             // console.log(e.target.files);
         setImageToUpload({image: URL.createObjectURL(e.target.files[0])});
+       
         }
     };
 
@@ -36,9 +39,15 @@ const  EditProfile = () => {
     const inputRef = useRef(null);
 
     function pickImage(e){
+        e.preventDefault();
         console.log(e.target.files);
         if (e.target.files.length !== 0) {
             setImageToShow({image: URL.createObjectURL(e.target.files[0])});
+            const formData = new FormData();
+            formData.append('img', e.target.files[0]);
+            setImageToUpload(formData);
+            console.log(formData);
+            setAccount({...account, user: { ...account.user, img: URL.createObjectURL(e.target.files[0])}})
         }
      };
  
@@ -48,8 +57,23 @@ const  EditProfile = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const formData = new FormData();
+
+        // Append the file input field to the FormData object
+        formData.append('img', profilePicture);
+
+        // Append any other form fields to the FormData object
+        formData.append('firstName', event.target.elements.firstName.value);
+        formData.append('lastName', event.target.elements.lastName.value);
+        formData.append('email', event.target.elements.email.value);
+        formData.append('password', event.target.elements.password.value);
+        formData.append('location', event.target.elements.location.value);
+        formData.append('bio', event.target.elements.bio.value);
+        formData.append('instagram', event.target.elements.instagram.value);
+        formData.append('twitter', event.target.elements.twitter.value);
+
         function changeDetails(){
-            axios.patch(`http://localhost:4000/app/edit-profile/${id}`, account, {headers: { authorization: process.env.SECRET}})
+            axios.patch(`http://localhost:4000/app/edit-profile/${id}`, formData, {headers: { authorization: process.env.SECRET}})
             .then((response) => {
                 console.log(response);
                 setUser({ ...user, user: response.data.response })
@@ -76,14 +100,16 @@ const  EditProfile = () => {
             <Card>
                 <h3>Profile Settings Manager</h3>
 
-                <div className='image-upload'>
+               <form onSubmit={handleSubmit} >
+
+
+               <div className='image-upload'>
                     {/* <FaUserCircle style={{fontSize: '120px', float: 'left'}}/> */}
                     <img className='profile-image' src={imageToShow.image ? imageToShow.image : require('./../img/default-profile-picture1.jpg')}/>
-                    <input style={{display: 'none'}} ref={inputRef} accept="image/*" type="file" onChange={pickImage} value={account.img}/>
-                    <CoolButton onClick={() => {inputRef.current.click()}} style={{width: '200px', top: '30%'}}>Edit Image</CoolButton>
+                    <input style={{display: 'none'}} ref={inputRef} accept="image/*" type="file" onChange={event => setProfilePicture(event.target.files[0])} name='img'/>
+                    <CoolButton type='button' onClick={() => {inputRef.current.click()}} style={{width: '200px', top: '30%'}}>Edit Image</CoolButton>
                 </div>
 
-               <form onSubmit={handleSubmit} >
                 <Container>
                     <FormGroup>
                     <Wrapper>
@@ -143,7 +169,7 @@ const  EditProfile = () => {
 
                 </Container>
 
-                <CoolButton>Save</CoolButton>
+                <CoolButton type='submit'>Save</CoolButton>
                 </form>
             </Card>
             </section>

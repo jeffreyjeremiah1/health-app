@@ -32,13 +32,12 @@ const BodyWater = new mongoose.Schema ({
 // });
 
 const UserSchema = new mongoose.Schema({
-    img: {data: Buffer, contentType: String},
+    img: {type: String},
     firstName: { type: String},
     lastName: { type: String},
     email: {type: String, required: [true, "can't be blank"], unique: true, index: true},
     password: { type: String, required: true },
     avatar: {type: String},
-    pic: {type: String},
     location: {type: String},
     bio: {type: String},
     instagram: {type: String},

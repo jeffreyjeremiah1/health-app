@@ -41,14 +41,14 @@ const Login = () => {
         // This handles registration
         if (register) {
             const { firstName, lastName, email, password, password2 } = form;
+    
             if (password === password2) {
                 await axios.post("http://localhost:4000/app/signup", {
-                    img: "",
+                    img: " ",
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
                     password: password,
-                    pic: " ",
                     location: " ",
                     bio: " ",
                     instagram: "",

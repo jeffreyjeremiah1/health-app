@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const Person = require('../models/SignUpModels');
 // const Profile = require('../models/ProfileModels');
+var http = require('http')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const fs = require('fs');
@@ -13,16 +14,16 @@ const passport = require("passport");
 const bodyParser = require('body-parser');
 
 // storage
-const Storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads');
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, 'uploads');
     },
-    filename: (req, file, cb) => {
-        cb(null, `${file.fieldname}-${Date.now()} ${path.extname(file.originalname)}`)
+    filename: function(req, file, cb) {
+      cb(null, file.originalname);
     }
-});
+  });
 
-const upload = multer({storage:Storage})
+const upload = multer({storage:storage})
 
 
 //Import Schema for Person to Register
@@ -32,7 +33,9 @@ router.get('/', function (req, res) {
     res.end();
 });
 
-router.post('/signup', upload.single('image'), async (req, res) => {
+router.post('/signup', upload.single('img'), async (req, res) => {
+    console.log(req.file);
+    
     Person.findOne({ email: req.body.email})
         .then(person => {
             if (person) {
@@ -47,19 +50,13 @@ router.post('/signup', upload.single('image'), async (req, res) => {
                 bcrypt.genSalt(10, function(err, salt) {
                     bcrypt.hash(req.body.password, salt, function(err, hash) {
                       req.body.password = hash;
-
-                    const imageObject = {
-                        data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-                        contentType: 'image/png'
-                    };
                 
                     const signedUpUser = new Person({
-                        img: imageObject,
+                        img: req.file? req.file.path: null,
                         firstName: req.body.firstName,
                         lastName: req.body.lastName,
                         email: req.body.email,
                         password: hash,
-                        pic: req.body.pic,
                         location: req.body.location,
                         bio: req.body.bio,
                         instagram: req.body.instagram,
@@ -75,7 +72,6 @@ router.post('/signup', upload.single('image'), async (req, res) => {
                         lastName: signedUpUser.lastName,
                         email: signedUpUser.email,
                         password: hash,
-                        pic: req.body.pic,
                         location: req.body.location,
                         bio: req.body.bio,
                         instagram: req.body.instagram,
