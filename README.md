@@ -1,6 +1,6 @@
 # health-calculator-app
 
-Our health calculator app is a powerful tool that helps you track and improve your health. It is built with React, and it is designed to be fast, responsive, and easy to use.
+The health calculator app is a powerful tool that helps you track and improve your health. It is built with React, and it is designed to be fast, responsive, and easy to use.
 
 One of the key features of our app is the ability to save your health data to a user database. This allows you to view your progress over time, and it makes it easy to track your progress and set goals.
 
