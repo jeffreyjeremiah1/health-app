@@ -25,7 +25,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage:storage})
 
-
 //Import Schema for Person to Register
 
 router.get('/', function (req, res) {
@@ -52,7 +51,7 @@ router.post('/signup', upload.single('img'), async (req, res) => {
                       req.body.password = hash;
                 
                     const signedUpUser = new Person({
-                        img: req.file? req.file.path: null,
+                        img: req.file? req.file.path: " ",
                         firstName: req.body.firstName,
                         lastName: req.body.lastName,
                         email: req.body.email,
@@ -130,8 +129,15 @@ router.post('/login', async(req, res) => {
 
                         const payload = {
                             id: user.id,
-                            name: user.name,
-                            email: user.email
+                            firstName: user.firstName,
+                            lastName: req.body.lastName,
+                            email: user.email,
+                            img: user.img,                           
+                            location: user.location,
+                            bio: user.bio,
+                            instagram: user.instagram,
+                            twitter: user.twitter,
+                            data: user.data
                         };
                         jsonwt.sign(
                             payload,
@@ -194,7 +200,7 @@ router.get(
     passport.authenticate("jwt", { session: false}),
     (req, res) => {
         const id = req.params.id;
-        Person.findById(id, ['_id', 'img', 'firstName', 'lastName', 'email', 'profile', 'bio', 'instagram', 'twitter'], (err, user) => {
+        Person.findById(id, ['_id', 'img', 'firstName', 'lastName', 'email', 'location' , 'bio', 'instagram', 'twitter'], (err, user) => {
             if (err) {
                 console.log(err);
             } else if (!user) {
@@ -230,15 +236,30 @@ router.get(
 // @desc    route for editing user profile
 // @access  PRIVATE
 
-router.patch('/edit-profile/:id', async (req, res ) => {
+router.patch('/edit-profile/:id', upload.single('img'), async (req, res ) => {
     
     const id = req.params.id;
-
+    const file = req.file
+    const filename = req.file ? req.file.filename : 'No file was uploaded';
+    console.log(file); 
+    console.log(req.body);
+  
+    const pathToUploads = path.join(__dirname, '..')
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
-          req.body.password = hash;
+            req.body.password = hash;
+            let img = null
+            if (filename !== 'No file was uploaded') {
+                img = {
+                    data: fs.readFileSync(path.join(pathToUploads + '/uploads/' + req.file.filename)),
+                    contentType: 'image/png'
+                };
+            }
+           
+            const updatedUser = {...req.body, img: img}
+            console.log(updatedUser);
 
-          Person.findByIdAndUpdate(id, {$set: req.body }, {new: true, projection: ['_id', 'img', 'firstName', 'lastName', 'email', 'location', 'bio', 'pic', 'instagram', 'twitter'] },(err, user) => {
+          Person.findByIdAndUpdate(id, {$set: updatedUser }, {new: true, projection: ['_id', 'img', 'firstName', 'lastName', 'email', 'location', 'bio', 'pic', 'instagram', 'twitter'] },(err, user) => {
             if (err) {
                 console.log(err);
             } else if (!user) {
@@ -246,10 +267,13 @@ router.patch('/edit-profile/:id', async (req, res ) => {
                 res.send({ response: 'User not found'});
             } else {
                 console.log('The user was updated successfully');
+                if (filename !== 'No file was uploaded') {
+                    fs.unlinkSync(path.join(pathToUploads + '/uploads/' + req.file.filename))
+                }
                 res.send({ response: user });
+
             }
         });
-
 
         });
     });

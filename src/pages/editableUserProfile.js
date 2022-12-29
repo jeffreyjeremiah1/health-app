@@ -5,13 +5,16 @@ import {Wrapper, TextBoxLabel, Textbox, Card, CardTitle, Container, FormGroup, C
 import axios from 'axios';
 import { appContext } from "../App";
 
+
 const  EditProfile = () => {
 
     // Previous data of user
     const {user, setUser} = useContext(appContext);
+
+    // To store new data from the form
+
     console.log(user);
     const [profilePicture, setProfilePicture] = useState(null);
-
     const [error, setError] = useState(false);
     const [imageToUpload, setImageToUpload] = useState(null);
     const [imageToShow, setImageToShow] = useState({image: null});
@@ -43,11 +46,9 @@ const  EditProfile = () => {
         console.log(e.target.files);
         if (e.target.files.length !== 0) {
             setImageToShow({image: URL.createObjectURL(e.target.files[0])});
-            const formData = new FormData();
-            formData.append('img', e.target.files[0]);
-            setImageToUpload(formData);
-            console.log(formData);
-            setAccount({...account, user: { ...account.user, img: URL.createObjectURL(e.target.files[0])}})
+            // formData.append('img', URL.createObjectURL(e.target.files[0]));
+            // setImageToUpload(formData);
+            setAccount({...account, user: { ...account.user, img: e.target.files[0]}})
         }
      };
  
@@ -57,23 +58,17 @@ const  EditProfile = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const formData = new FormData();
-
-        // Append the file input field to the FormData object
-        formData.append('img', profilePicture);
-
+        
         // Append any other form fields to the FormData object
-        formData.append('firstName', event.target.elements.firstName.value);
-        formData.append('lastName', event.target.elements.lastName.value);
-        formData.append('email', event.target.elements.email.value);
-        formData.append('password', event.target.elements.password.value);
-        formData.append('location', event.target.elements.location.value);
-        formData.append('bio', event.target.elements.bio.value);
-        formData.append('instagram', event.target.elements.instagram.value);
-        formData.append('twitter', event.target.elements.twitter.value);
-
-        function changeDetails(){
-            axios.patch(`http://localhost:4000/app/edit-profile/${id}`, formData, {headers: { authorization: process.env.SECRET}})
+       
+        async function changeDetails(){
+            console.log(account);
+            const formData = new FormData();
+            for (const key in account.user){
+                formData.append(`${key}`, account.user[key]);
+            }
+            
+            await axios.patch(`http://localhost:4000/app/edit-profile/${id}`, formData, {headers: {'Content-Type': 'multipart/form-data'}})
             .then((response) => {
                 console.log(response);
                 setUser({ ...user, user: response.data.response })
@@ -84,13 +79,15 @@ const  EditProfile = () => {
                 console.log(error.response);
             });
         }
-        changeDetails();
-        navigate('/profile')
+        changeDetails().then(
+            navigate('/profile')
+        )
+        
     }
 
     function handleChange(e) {
         const {name, value} = e.target
-        setAccount({ ...account, [name]: value});
+        setAccount({ ...account,  user: {...account.user, [name]: value }});
     }
 
 
@@ -106,7 +103,7 @@ const  EditProfile = () => {
                <div className='image-upload'>
                     {/* <FaUserCircle style={{fontSize: '120px', float: 'left'}}/> */}
                     <img className='profile-image' src={imageToShow.image ? imageToShow.image : require('./../img/default-profile-picture1.jpg')}/>
-                    <input style={{display: 'none'}} ref={inputRef} accept="image/*" type="file" onChange={event => setProfilePicture(event.target.files[0])} name='img'/>
+                    <input style={{display: 'none'}} ref={inputRef} accept="image/*" type="file" onChange={pickImage} name='img'/>
                     <CoolButton type='button' onClick={() => {inputRef.current.click()}} style={{width: '200px', top: '30%'}}>Edit Image</CoolButton>
                 </div>
 

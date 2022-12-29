@@ -13,7 +13,6 @@ const initialState = {
     password2: ''
 }
 
-
 const Login = () => {
 
     const navigate = useNavigate();
@@ -57,6 +56,7 @@ const Login = () => {
                 .then(response => {
                     console.log(response.data);
                     if (response.data.success) {
+                        console.log(response.data);
                         setUser({auth: true, user: response.data.user});
                         navigate('/');
                     } else {
