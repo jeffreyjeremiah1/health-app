@@ -8,10 +8,18 @@ import { appContext } from '../App.js'
 
 const Profile = () => {
     const {user, setUser} = useContext(appContext);
-    console.log(user);
-    const image = user.user.img
-    const navigate = useNavigate();
+    const [imageToShow, setImageToShow] = useState();
 
+    console.log(user);
+    const navigate = useNavigate();
+    const imageData = user.user.img.data.data.toString('base64')
+
+    // setImageToShow(`data:image/png;base64,${imageData}`)
+
+    // setImageToShow(require('./../img/default-profile-picture1.jpg'))
+
+        
+    
 
 return (
     <>   
@@ -20,19 +28,17 @@ return (
                 <Wrapper>
                 <FaUserCircle style={{fontSize: '120px'}}/>
             
-                {user.user.img? user.user.img.map((singleData) => { 
+                {user.user.img.map((singleData) => { 
                     const base64string = btoa(
                         String.fromCharCode(...new Uint8Array(singleData.img.data.data))
                     );
                
-                    return <img className='profile-image' src={image ? `image:image/png;base64,${base64string}` : require('./../img/default-profile-picture1.jpg')} alt='photo'/> })
-                    :
+                    return <img className='profile-image' src={`image:image/png;base64,${base64string}` && require('./../img/default-profile-picture1.jpg')} alt='photo'/> })
 
-                    <img className='profile-image' src={ require('./../img/default-profile-picture1.jpg')} alt='photo'/>
                 }
 
-               
-                
+                {/* <img className='profile-image' src={`data:${user.user.img.contentType};base64,${imageData}`} alt='photo'/> */}
+
                 </Wrapper>                
                 <h3>{user.user.firstName} {user.user.lastName}</h3>
                 <CoolButton onClick={() => navigate('/edit-profile')}><FaPen/> Edit Profile</CoolButton>

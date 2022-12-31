@@ -32,7 +32,7 @@ router.get('/', function (req, res) {
     res.end();
 });
 
-router.post('/signup', upload.single('img'), async (req, res) => {
+router.post('/signup', async (req, res) => {
     console.log(req.file);
     
     Person.findOne({ email: req.body.email})
@@ -42,16 +42,13 @@ router.post('/signup', upload.single('img'), async (req, res) => {
                     .status(400)
                     .json({ emailerror: "Email is already registered in our system "});
             } else {
-                // let hash = bcrypt.hashSync(req.body.password, 10);
-                // const saltPassword = bcrypt.genSalt(10)
-                // const securePassword = bcrypt.hash(saltPassword, saltPassword)
-
+              
                 bcrypt.genSalt(10, function(err, salt) {
                     bcrypt.hash(req.body.password, salt, function(err, hash) {
                       req.body.password = hash;
                 
                     const signedUpUser = new Person({
-                        img: req.file? req.file.path: " ",
+                        img: { data: req.file? req.file.path: " ", contentType: String},
                         firstName: req.body.firstName,
                         lastName: req.body.lastName,
                         email: req.body.email,
@@ -114,19 +111,20 @@ router.post('/signup', upload.single('img'), async (req, res) => {
 router.post('/login', async(req, res) => {
     const email = req.body.email
     const password = req.body.password
-
+    console.log(password);
+ 
     Person.findOne({ email })
         .then(user => {
             if (!user){
                 res.send({ response: " User not found with this email " })
                     // .status(404)
                     // .json({ emailError: "User not found with this email"});
-            }
-            bcrypt
-                .compare(password, user.password)
-                .then(isCorrect => {
-                    if (isCorrect){
-
+            } 
+            bcrypt.compare(password, user.password)
+                .then((isMatch) => {
+                    console.log(isMatch);
+                    console.log(user.password);
+                    if (isMatch) {
                         const payload = {
                             id: user.id,
                             firstName: user.firstName,
@@ -138,7 +136,7 @@ router.post('/login', async(req, res) => {
                             instagram: user.instagram,
                             twitter: user.twitter,
                             data: user.data
-                        };
+                        }
                         jsonwt.sign(
                             payload,
                             process.env.SECRET,
@@ -162,7 +160,9 @@ router.post('/login', async(req, res) => {
                         res.send({ response: "password is incorrect" });
                     }
                 })
-                .catch(function (err) {console.log(err)} );
+                .catch((error) => {
+                    console.error(error);
+                });
         })
         .catch(err => console.log(err));
 });
