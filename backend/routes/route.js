@@ -113,14 +113,15 @@ router.post('/login', async(req, res) => {
     const password = req.body.password
     console.log(password);
  
+    
     Person.findOne({ email })
         .then(user => {
             if (!user){
                 res.send({ response: " User not found with this email " })
                     // .status(404)
                     // .json({ emailError: "User not found with this email"});
-            } 
-            bcrypt.compare(password, user.password)
+            } else {
+                bcrypt.compare(password, user.password)
                 .then((isMatch) => {
                     console.log(isMatch);
                     console.log(user.password);
@@ -163,6 +164,8 @@ router.post('/login', async(req, res) => {
                 .catch((error) => {
                     console.error(error);
                 });
+
+            }
         })
         .catch(err => console.log(err));
 });

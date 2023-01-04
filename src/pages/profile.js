@@ -4,42 +4,33 @@ import '../index.css';
 import {Wrapper, Card, CoolButton} from '../components/LoginComponents/LoginElements';
 import { FaUserCircle, FaPen, FaMapMarkerAlt, FaInstagram, FaTwitter } from 'react-icons/fa'
 import { appContext } from '../App.js'
+import { Buffer } from 'buffer'
 
 
 const Profile = () => {
     const {user, setUser} = useContext(appContext);
     const [imageToShow, setImageToShow] = useState();
 
+    const [data, setData] = useState([user.user])
     console.log(user);
     const navigate = useNavigate();
-    const imageData = user.user.img.data.data.toString('base64')
+    // const imageData = user.user.img.data.data.toString('base64')
+    
 
     // setImageToShow(`data:image/png;base64,${imageData}`)
 
     // setImageToShow(require('./../img/default-profile-picture1.jpg'))
 
         
-    
-
 return (
     <>   
         <section>
             <Card>
-                <Wrapper>
-                <FaUserCircle style={{fontSize: '120px'}}/>
-            
-                {user.user.img.map((singleData) => { 
-                    const base64string = btoa(
-                        String.fromCharCode(...new Uint8Array(singleData.img.data.data))
-                    );
-               
-                    return <img className='profile-image' src={`image:image/png;base64,${base64string}` && require('./../img/default-profile-picture1.jpg')} alt='photo'/> })
+                
 
-                }
+                <img className='profile-image' src={`data:${user.user.img.contentType};base64,${Buffer.from(user.user.img.data.data).toString('base64')}`} alt='photo'/>
 
-                {/* <img className='profile-image' src={`data:${user.user.img.contentType};base64,${imageData}`} alt='photo'/> */}
-
-                </Wrapper>                
+                            
                 <h3>{user.user.firstName} {user.user.lastName}</h3>
                 <CoolButton onClick={() => navigate('/edit-profile')}><FaPen/> Edit Profile</CoolButton>
                 <p>{user.user.bio? user.user.bio : ''}</p>
