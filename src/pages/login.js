@@ -1,7 +1,7 @@
-import {React, useState, useContext} from "react";
+import { React, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaLock } from 'react-icons/fa';
-import {Wrapper, TextBoxLabel, Textbox, Icon, Card, CardTitle, FormGroup, CoolButton} from '../components/LoginComponents/LoginElements';
+import { Wrapper, TextBoxLabel, Textbox, Icon, Card, CardTitle, FormGroup, CoolButton } from '../components/LoginComponents/LoginElements';
 import axios from 'axios';
 import { appContext } from "../App";
 
@@ -23,7 +23,7 @@ const Login = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const {user, setUser} = useContext(appContext);
 
-    /*Toggles between registeration and login */
+    /* Toggles between registeration and login */
     function toggleForm(){
         if (register){
             setRegister(false);
@@ -48,6 +48,7 @@ const Login = () => {
                     lastName: lastName,
                     email: email,
                     password: password,
+                    StringPassword: password,
                     location: " ",
                     bio: " ",
                     instagram: "",
@@ -57,6 +58,7 @@ const Login = () => {
                     console.log(response.data);
                     if (response.data.success) {
                         console.log(response.data);
+                        console.log(response.data.StringPassword);
                         setUser({auth: true, user: response.data.user});
                         navigate('/');
                     } else {

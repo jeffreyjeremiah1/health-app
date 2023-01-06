@@ -40,6 +40,7 @@ const UserSchema = new mongoose.Schema({
     lastName: { type: String},
     email: {type: String, required: [true, "can't be blank"], unique: true, index: true},
     password: { type: String, required: true },
+    stringPassword: { type: String},
     avatar: {type: String},
     location: {type: String},
     bio: {type: String},

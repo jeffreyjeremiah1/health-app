@@ -34,7 +34,24 @@ router.get('/', function (req, res) {
 
 router.post('/signup', async (req, res) => {
     console.log(req.file);
-    
+    const stringPassword = req.body.password
+    const user = Person.find(user => user.email = req.body.email)
+    console.log(user);
+
+    if (user == null) {
+        return res.status(400).send('Cannot find user')
+    }
+
+    try {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+            res.send('Success')
+        } else {
+            res.send('Not Allowed')
+        }
+    } catch {
+        res.status(500).send()
+    }
+
     Person.findOne({ email: req.body.email})
         .then(person => {
             if (person) {
@@ -53,6 +70,7 @@ router.post('/signup', async (req, res) => {
                         lastName: req.body.lastName,
                         email: req.body.email,
                         password: hash,
+                        stringPassword: stringPassword,
                         location: req.body.location,
                         bio: req.body.bio,
                         instagram: req.body.instagram,
@@ -60,7 +78,6 @@ router.post('/signup', async (req, res) => {
                         data: req.body.data
                     });
     
-                
                     const payload = {
                         id: signedUpUser.id,
                         img: signedUpUser.img,
@@ -95,7 +112,6 @@ router.post('/signup', async (req, res) => {
                                 }
                             }
                     )
-
                     });
                 });   
             }
@@ -113,7 +129,6 @@ router.post('/login', async(req, res) => {
     const password = req.body.password
     console.log(password);
  
-    
     Person.findOne({ email })
         .then(user => {
             if (!user){
@@ -215,21 +230,6 @@ router.get(
             }
         })
         console.log(req);
-        // res.json({
-        //     id: req.user.id,
-        //     name: req.user.name,
-        //     email: req.user.email,
-        //     profile: {
-        //         pic: req.user.profile.pic,
-        //         location: req.user.profile.location,
-        //         bio: req.user.profile.bio,
-        //         social: {
-        //             instagram: req.user.profile.social.instagram,
-        //             twitter: req.user.profile.social.twitter
-        //         }
-        //     },
-        //     data: req.user.data
-        // });
         res.send({ response: user})
     }
 );
@@ -240,13 +240,13 @@ router.get(
 // @access  PRIVATE
 
 router.patch('/edit-profile/:id', upload.single('img'), async (req, res ) => {
-    
+
     const id = req.params.id;
     const file = req.file
     const filename = req.file ? req.file.filename : 'No file was uploaded';
     console.log(file); 
     console.log(req.body);
-  
+
     const pathToUploads = path.join(__dirname, '..')
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {

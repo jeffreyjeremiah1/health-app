@@ -32,6 +32,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "require": "^2.4.20",
-    "timestamps": "^0.1.3"
+    "timestamps": "^0.1.3",
+    "uglify": "^0.1.5"
   }
 }

@@ -67,7 +67,7 @@ export const Dropdown = () => {
                 ))}
             </div>
            
-            <button onClick={handleClick}>
+            <button  onClick={handleClick}>
                 <FaUserCircle/>{user.user.firstName} {user.user.lastName}<FaRegArrowAltCircleRight/> 
             </button>
 

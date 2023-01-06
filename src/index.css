@@ -94,11 +94,10 @@ h3 {
   font-size: 1.25rem;
 }
 h4 {
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 p {
   margin-bottom: 1.25rem;
-  color: var(--clr-grey-5);
 }
 input {
   width: 3.7rem;
@@ -142,7 +141,8 @@ input:-webkit-autofill:active {
     font-size: 1rem;
   }
   body {
-    font-size: 1rem;
+    /* font-size: 1rem; */
+    width: 100%;
   }
   h1,
   h2,
@@ -332,7 +332,7 @@ code {
 
 /* Style for drop down account button */
 
-button {
+.dropdown button {
   display: flex;
   height: 46px;
   border-radius: 4px;
@@ -343,7 +343,6 @@ button {
   border: none;
   outline: none;
   cursor: pointer;
-  /* font-family: "Euclid Circular A"; */
   color: #fff;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -417,9 +416,56 @@ button {
   background: #2c2b31;
 }
 
+/* profile Card */
+
+#profile-card {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  justify-content: center;
+}
+
+#profile-card .wrapper {
+  z-index: -1;
+  height: 150px;
+  margin-bottom: 5rem;
+  padding: 4px;
+  width: 400px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  /* border-bottom-left-radius: 60px; */
+  border-bottom-right-radius: 100px;
+  background-color: #2caeba;
+}
+
+.socials {
+  margin: 0.15rem;
+  display: inline-flex;
+  justify-content: space-between;
+  font-size: 150%;
+  width: 40%;
+  color: #212025;
+}
+
+#profile-card .edit-button {
+  background-color: #2caeba;
+}
+
+.socials > a {
+  color: #2caeba;
+}
+
+.text-wrap {
+  margin: 0.5rem 0;
+  display: inline-flex;
+  /* justify-content: center; */
+  inline-size: 250px;
+  overflow-wrap: break-word;
+}
+
 /* Style for picture upload */
 
-.profile-image {
+.edit-profile-image {
   height: 100px;
   width: 100px;
   float: left;
@@ -431,8 +477,17 @@ button {
   border: 2px solid #8703c9;
 }
 
-.profile-image:hover {
+.edit-profile-image:hover {
   border: 3px solid #a789aa;
+}
+
+.profile-image {
+  height: 150px;
+  width: 150px;
+  margin: 4rem;
+  border-radius: 100px;
+  justify-content: center;
+  border: 2px solid #fff;
 }
 
 .image-upload {

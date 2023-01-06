@@ -4,6 +4,7 @@ import '../index.css';
 import {Wrapper, TextBoxLabel, Textbox, Card, CardTitle, Container, FormGroup, CoolButton} from '../components/LoginComponents/LoginElements';
 import axios from 'axios';
 import { appContext } from "../App";
+import { Buffer } from 'buffer'
 
 
 const  EditProfile = () => {
@@ -17,7 +18,7 @@ const  EditProfile = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const [error, setError] = useState(false);
     const [imageToUpload, setImageToUpload] = useState(null);
-    const [imageToShow, setImageToShow] = useState({image: null});
+    const [imageToShow, setImageToShow] = useState({image: user.user.img});
     const [ isUser, setIsUser ] = useState(false);
 
     // This keeps track of the user returned from the api call
@@ -102,7 +103,8 @@ const  EditProfile = () => {
 
                <div className='image-upload'>
                     {/* <FaUserCircle style={{fontSize: '120px', float: 'left'}}/> */}
-                    <img className='profile-image' src={imageToShow.image ? imageToShow.image : require('./../img/default-profile-picture1.jpg')}/>
+                    {/* <img className='edit-profile-image' src={imageToShow.image ? imageToShow.image : require('./../img/default-profile-picture1.jpg')}/> */}
+                    <img className='edit-profile-image' src={`data:${user.user.img.contentType};base64,${Buffer.from(user.user.img.data.data).toString('base64')}`}/>
                     <input style={{display: 'none'}} ref={inputRef} accept="image/*" type="file" onChange={pickImage} name='img'/>
                     <CoolButton type='button' onClick={() => {inputRef.current.click()}} style={{width: '200px', top: '30%'}}>Edit Image</CoolButton>
                 </div>
