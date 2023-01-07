@@ -35,22 +35,7 @@ router.get('/', function (req, res) {
 router.post('/signup', async (req, res) => {
     console.log(req.file);
     const stringPassword = req.body.password
-    const user = Person.find(user => user.email = req.body.email)
     console.log(user);
-
-    if (user == null) {
-        return res.status(400).send('Cannot find user')
-    }
-
-    try {
-        if (await bcrypt.compare(req.body.password, user.password)) {
-            res.send('Success')
-        } else {
-            res.send('Not Allowed')
-        }
-    } catch {
-        res.status(500).send()
-    }
 
     Person.findOne({ email: req.body.email})
         .then(person => {
@@ -126,63 +111,115 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async(req, res) => {
     const email = req.body.email
-    const password = req.body.password
-    console.log(password);
- 
-    Person.findOne({ email })
-        .then(user => {
-            if (!user){
-                res.send({ response: " User not found with this email " })
-                    // .status(404)
-                    // .json({ emailError: "User not found with this email"});
-            } else {
-                bcrypt.compare(password, user.password)
-                .then((isMatch) => {
-                    console.log(isMatch);
-                    console.log(user.password);
-                    if (isMatch) {
-                        const payload = {
-                            id: user.id,
-                            firstName: user.firstName,
-                            lastName: req.body.lastName,
-                            email: user.email,
-                            img: user.img,                           
-                            location: user.location,
-                            bio: user.bio,
-                            instagram: user.instagram,
-                            twitter: user.twitter,
-                            data: user.data
-                        }
-                        jsonwt.sign(
-                            payload,
-                            process.env.SECRET,
-                            {expiresIn: 10000 },
-                            (err, token) => {
-                                if (err) {
-                                    console.log(err);
-                                } else if (!token) {
-                                    console.log("No token");
-                                } else {
-                                    console.log("success");
-                                    res.json({
-                                        success: true,
-                                        token: "Bearer" + token,
-                                        user: user
-                                    });
-                                }
-                            }
-                        );
-                    } else {
-                        res.send({ response: "password is incorrect" });
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+    // const password = req.body.password
 
+
+    // const user = Person.find(user => user.email = req.body.email)
+    const user = Person.findOne({ email })
+    // console.log(password);
+
+    if (user == null) {
+        return res.status(400).send('Cannot find user')
+    }
+
+    try {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+            res.send('Success')
+            const payload = {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: req.body.lastName,
+                email: user.email,
+                img: user.img,                           
+                location: user.location,
+                bio: user.bio,
+                instagram: user.instagram,
+                twitter: user.twitter,
+                data: user.data
             }
-        })
-        .catch(err => console.log(err));
+            jsonwt.sign(
+                payload,
+                process.env.SECRET,
+                {expiresIn: 10000 },
+                (err, token) => {
+                    if (err) {
+                        console.log(err);
+                    } else if (!token) {
+                        console.log("No token");
+                    } else {
+                        console.log("success");
+                        res.json({
+                            success: true,
+                            token: "Bearer" + token,
+                            user: user
+                        });
+                    }
+                }
+            );
+
+        } else {
+            res.send({ response: "password is incorrect" });
+            res.send('Not Allowed')
+        }
+    } catch {
+        res.status(500).send()
+    }
+
+ 
+    // Person.findOne({ email })
+    //     .then(user => {
+    //         if (!user){
+    //             res.send({ response: " User not found with this email " })
+    //                 // .status(404)
+    //                 // .json({ emailError: "User not found with this email"});
+    //         } else {
+    //             bcrypt.compare(password, user.password)
+    //             .then((isMatch) => {
+    //                 console.log(isMatch);
+    //                 console.log(user.password);
+    //                 if (isMatch) {
+    //                     const payload = {
+    //                         id: user.id,
+    //                         firstName: user.firstName,
+    //                         lastName: req.body.lastName,
+    //                         email: user.email,
+    //                         img: user.img,                           
+    //                         location: user.location,
+    //                         bio: user.bio,
+    //                         instagram: user.instagram,
+    //                         twitter: user.twitter,
+    //                         data: user.data
+    //                     }
+    //                     jsonwt.sign(
+    //                         payload,
+    //                         process.env.SECRET,
+    //                         {expiresIn: 10000 },
+    //                         (err, token) => {
+    //                             if (err) {
+    //                                 console.log(err);
+    //                             } else if (!token) {
+    //                                 console.log("No token");
+    //                             } else {
+    //                                 console.log("success");
+    //                                 res.json({
+    //                                     success: true,
+    //                                     token: "Bearer" + token,
+    //                                     user: user
+    //                                 });
+    //                             }
+    //                         }
+    //                     );
+    //                 } else {
+    //                     res.send({ response: "password is incorrect" });
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.error(error);
+    //             });
+
+    //         }
+    //     })
+    //     .catch(err => console.log(err));
 });
 
 // @type    POST
